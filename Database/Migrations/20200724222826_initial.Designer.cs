@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Database.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200724212604_Ratings")]
-    partial class Ratings
+    [Migration("20200724222826_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,12 +24,31 @@ namespace Database.Migrations
             modelBuilder.Entity("Database.Models.Genres", b =>
                 {
                     b.Property<string>("Genre")
-                        .HasColumnType("nvarchar(20)")
-                        .HasMaxLength(20);
+                        .HasColumnType("varchar(20)")
+                        .HasMaxLength(20)
+                        .IsUnicode(false);
 
                     b.HasKey("Genre");
 
                     b.ToTable("Genres");
+                });
+
+            modelBuilder.Entity("Database.Models.Links", b =>
+                {
+                    b.Property<long>("MovieId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("ImdbId")
+                        .HasColumnType("varchar(7)")
+                        .HasMaxLength(7)
+                        .IsUnicode(false);
+
+                    b.Property<long?>("TmdbId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("MovieId");
+
+                    b.ToTable("Links");
                 });
 
             modelBuilder.Entity("Database.Models.MovieGenres", b =>
@@ -38,7 +57,7 @@ namespace Database.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("Genre")
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("varchar(20)");
 
                     b.HasKey("MovieId", "Genre");
 
@@ -54,8 +73,9 @@ namespace Database.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(255)")
-                        .HasMaxLength(255);
+                        .HasColumnType("varchar(255)")
+                        .HasMaxLength(255)
+                        .IsUnicode(false);
 
                     b.HasKey("MovieId");
 
@@ -83,6 +103,44 @@ namespace Database.Migrations
                     b.ToTable("Ratings");
                 });
 
+            modelBuilder.Entity("Database.Models.Tags", b =>
+                {
+                    b.Property<long>("TagId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("MovieId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Tag")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)")
+                        .HasMaxLength(255)
+                        .IsUnicode(false);
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("TagId");
+
+                    b.HasIndex("MovieId");
+
+                    b.ToTable("Tags");
+                });
+
+            modelBuilder.Entity("Database.Models.Links", b =>
+                {
+                    b.HasOne("Database.Models.Movies", "Movie")
+                        .WithOne("Links")
+                        .HasForeignKey("Database.Models.Links", "MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Database.Models.MovieGenres", b =>
                 {
                     b.HasOne("Database.Models.Genres", "GenreNav")
@@ -102,6 +160,15 @@ namespace Database.Migrations
                 {
                     b.HasOne("Database.Models.Movies", "Movie")
                         .WithMany("Ratings")
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Database.Models.Tags", b =>
+                {
+                    b.HasOne("Database.Models.Movies", "Movie")
+                        .WithMany("Tags")
                         .HasForeignKey("MovieId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

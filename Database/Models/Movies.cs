@@ -13,5 +13,9 @@ namespace Database.Models
         public List<MovieGenres> Genres { get; set; }
 
         public List<Ratings> Ratings { get; set; }
+
+        public Links Links { get; set; }
+
+        public List<Tags> Tags { get; set; }
     }
 }

@@ -14,6 +14,14 @@ namespace Database.Data
         {
         }
 
+        public DbSet<Movies> Movies { get; set; }
+
+        public DbSet<Genres> Genres { get; set; }
+
+        public DbSet<MovieGenres> MovieGenres { get; set; }
+
+        public DbSet<Ratings> Ratings { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Movies>(entity =>
@@ -25,6 +33,8 @@ namespace Database.Data
                 entity.Property(e => e.Title).IsRequired().HasMaxLength(255);
 
                 entity.HasMany(e => e.Genres).WithOne(e => e.Movie).HasForeignKey(e => e.MovieId);
+
+                entity.HasMany(e => e.Ratings).WithOne(e => e.Movie).HasForeignKey(e => e.MovieId);
             });
 
             builder.Entity<Genres>(entity =>
@@ -39,6 +49,13 @@ namespace Database.Data
             builder.Entity<MovieGenres>(entity =>
             {
                 entity.HasKey(c => new { c.MovieId, c.Genre });
+            });
+
+            builder.Entity<Ratings>(entity =>
+            {
+                entity.HasKey(c => new { c.UserId, c.MovieId });
+
+                entity.Property(e => e.Rating).HasColumnType("decimal(1, 1)");
             });
         }
     }

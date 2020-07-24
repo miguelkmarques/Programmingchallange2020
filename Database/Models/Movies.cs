@@ -9,5 +9,7 @@ namespace Database.Models
         public long MovieId { get; set; }
 
         public string Title { get; set; }
+
+        public List<MovieGenres> Genres { get; set; }
     }
 }

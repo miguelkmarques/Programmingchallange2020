@@ -11,5 +11,7 @@ namespace Database.Models
         public Movies Movie { get; set; }
 
         public string Genre { get; set; }
+
+        public Genres GenreNav { get; set; }
     }
 }

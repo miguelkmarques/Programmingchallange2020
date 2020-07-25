@@ -5,6 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200725161908_GenomeTagsAndScores.cs" />
+    <Compile Remove="Migrations\20200725161908_GenomeTagsAndScores.Designer.cs" />
+    <Compile Remove="Migrations\20200725161949_GenomeTagsAndScores.cs" />
+    <Compile Remove="Migrations\20200725161949_GenomeTagsAndScores.Designer.cs" />
+    <Compile Remove="Migrations\20200725162428_GenomeTagsAndScores.cs" />
+    <Compile Remove="Migrations\20200725162428_GenomeTagsAndScores.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.6" />
   </ItemGroup>

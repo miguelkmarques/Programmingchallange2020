@@ -17,5 +17,7 @@ namespace Database.Models
         public Links Links { get; set; }
 
         public List<Tags> Tags { get; set; }
+
+        public List<GenomeScores> GenomeScores { get; set; }
     }
 }

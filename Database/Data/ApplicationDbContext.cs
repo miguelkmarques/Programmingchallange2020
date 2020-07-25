@@ -26,6 +26,10 @@ namespace Database.Data
 
         public DbSet<Tags> Tags { get; set; }
 
+        public DbSet<GenomeTags> GenomeTags { get; set; }
+
+        public DbSet<GenomeScores> GenomeScores { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Movies>(entity =>
@@ -75,11 +79,27 @@ namespace Database.Data
 
             builder.Entity<Tags>(entity =>
             {
-                entity.HasKey(c => new { c.TagId });
+                entity.HasKey(c => c.TagId);
+
+                entity.Property(e => e.Tag).HasMaxLength(255).IsRequired().IsUnicode(false);
+            });
+
+            builder.Entity<GenomeTags>(entity =>
+            {
+                entity.HasKey(c => c.TagId);
+
+                entity.Property(e => e.TagId).ValueGeneratedNever();
 
                 entity.Property(e => e.Tag).HasMaxLength(255).IsRequired().IsUnicode(false);
 
+                entity.HasMany(e => e.GenomeScores).WithOne(e => e.GenomeTag).HasForeignKey(e => e.TagId);
+            });
 
+            builder.Entity<GenomeScores>(entity =>
+            {
+                entity.HasKey(c => new { c.MovieId, c.TagId });
+
+                entity.Property(e => e.Relevance).HasColumnType("decimal(19,19)");
             });
         }
     }

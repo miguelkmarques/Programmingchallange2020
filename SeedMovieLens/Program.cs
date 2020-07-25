@@ -31,11 +31,20 @@ namespace SeedMovieLens
             {
                 Logger.Error(err);
             }
+
+            Logger.Warn("end");
         }
 
-        static private void SeedData()
+        private static void SeedData()
         {
             Context.Database.Migrate();
+
+            InsertMoviesAndGenres();
+        }
+
+        private static void InsertMoviesAndGenres()
+        {
+            
         }
     }
 }

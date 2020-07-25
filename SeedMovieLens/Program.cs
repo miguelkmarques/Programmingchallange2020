@@ -1,10 +1,14 @@
 ﻿using Database.Data;
+using Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
+using SeedMovieLens.CsvService;
 using System;
 using System.Configuration;
+using System.IO;
+using System.Linq;
 
 namespace SeedMovieLens
 {
@@ -44,7 +48,16 @@ namespace SeedMovieLens
 
         private static void InsertMoviesAndGenres()
         {
-            
+            var moviesService = new MoviesService();
+            var movies = moviesService.ReadCsvFile(Path.Combine(Configuration.GetSection("CsvPath").Value, "movies.csv"));
+            var genres = movies.SelectMany(s => s.Genres).Select(s => s.Genre).Distinct().Select(s => new Genres { Genre = s });
+
+            Context.Genres.AddRange(genres);
+            Context.SaveChanges();
+
+            Context.Movies.AddRange(movies);
+            Context.SaveChanges();
+            Console.Read();
         }
     }
 }

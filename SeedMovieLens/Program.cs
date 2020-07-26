@@ -22,7 +22,7 @@ namespace SeedMovieLens
         static void Main(string[] args)
         {
             Logger.Warn("start");
-            OptionsBuilder.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+            OptionsBuilder.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"));
             //var loggerFactory = LoggerFactory.Create(configure => { configure.AddNLog(); });
             //OptionsBuilder.UseLoggerFactory(loggerFactory);
             Context = new ApplicationDbContext(OptionsBuilder.Options);

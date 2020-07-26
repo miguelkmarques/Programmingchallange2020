@@ -12,7 +12,7 @@ namespace Database
         public ApplicationDbContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=aspnet-MovieLens-4C8F3C37-F74F-41E5-9187-E05B7524D92C;Trusted_Connection=True;MultipleActiveResultSets=true");
+            optionsBuilder.UseNpgsql("Server=localhost;Database=movielens;Port=5432;User Id=postgres;Password=postgres;");
             return new ApplicationDbContext(optionsBuilder.Options);
         }
     }

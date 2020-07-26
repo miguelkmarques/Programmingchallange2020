@@ -3,7 +3,6 @@ using CsvHelper.Configuration;
 using Dapper;
 using Database.Data;
 using Database.Models;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -22,7 +21,7 @@ namespace SeedMovieLens.CsvService
 
         public void ReadCsvFile(string location, DbContext context, string connectionString)
         {
-            OptionsBuilder.UseSqlServer(connectionString);
+            OptionsBuilder.UseNpgsql(connectionString);
             try
             {
                 int countRecords = 0;
@@ -35,12 +34,14 @@ namespace SeedMovieLens.CsvService
                     }
                     countRecords--;
                 }
-                int divisao = countRecords / 2;
+                int divisao = countRecords / 4;
 
                 List<Task> tasks = new List<Task>
                 {
                     Task.Run(() => ReadPartialCsv(location, new ApplicationDbContext(OptionsBuilder.Options), divisao * 0, divisao)),
                     Task.Run(() => ReadPartialCsv(location, new ApplicationDbContext(OptionsBuilder.Options), divisao * 1, divisao)),
+                    Task.Run(() => ReadPartialCsv(location, new ApplicationDbContext(OptionsBuilder.Options), divisao * 2, divisao)),
+                    Task.Run(() => ReadPartialCsv(location, new ApplicationDbContext(OptionsBuilder.Options), divisao * 3, countRecords - divisao * 3)),
                 };
 
 

@@ -48,7 +48,8 @@ namespace SeedMovieLens
             //InsertMoviesAndGenres();
             //InsertRatings();
             //InsertAverageRatingOfMovies();
-            InsertLinks();
+            //InsertLinks();
+            InsertTags();
         }
 
         private static void InsertMoviesAndGenres()
@@ -67,6 +68,12 @@ namespace SeedMovieLens
         {
             var linksService = new LinksService();
             linksService.ReadCsvFile(Path.Combine(Configuration.GetSection("CsvPath").Value, "links.csv"), Configuration.GetConnectionString("DefaultConnection"), 1);
+        }
+
+        private static void InsertTags()
+        {
+            var tagsService = new TagsService();
+            tagsService.ReadCsvFile(Path.Combine(Configuration.GetSection("CsvPath").Value, "tags.csv"), Configuration.GetConnectionString("DefaultConnection"), 2);
         }
 
         private static void InsertAverageRatingOfMovies()

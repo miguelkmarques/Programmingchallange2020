@@ -49,7 +49,8 @@ namespace SeedMovieLens
             //InsertRatings();
             //InsertAverageRatingOfMovies();
             //InsertLinks();
-            InsertTags();
+            //InsertTags();
+            InsertGenomeTags();
         }
 
         private static void InsertMoviesAndGenres()
@@ -74,6 +75,12 @@ namespace SeedMovieLens
         {
             var tagsService = new TagsService();
             tagsService.ReadCsvFile(Path.Combine(Configuration.GetSection("CsvPath").Value, "tags.csv"), Configuration.GetConnectionString("DefaultConnection"), 2);
+        }
+
+        private static void InsertGenomeTags()
+        {
+            var genometagsService = new GenomeTagsService();
+            genometagsService.ReadCsvFile(Path.Combine(Configuration.GetSection("CsvPath").Value, "genome-tags.csv"), Configuration.GetConnectionString("DefaultConnection"), 1);
         }
 
         private static void InsertAverageRatingOfMovies()

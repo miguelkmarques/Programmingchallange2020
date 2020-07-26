@@ -17,8 +17,9 @@ namespace SeedMovieLens.CsvService
     public class RatingsService
     {
         private readonly DbContextOptionsBuilder<ApplicationDbContext> OptionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public void ReadCsvFile(string location, string connectionString)
+        public void ReadCsvFile(string location, string connectionString, int threads)
         {
             OptionsBuilder.UseNpgsql(connectionString);
             try
@@ -32,18 +33,28 @@ namespace SeedMovieLens.CsvService
                     }
                     countRecords--;
                 }
-                int divisao = countRecords / 4;
+                Logger.Info($"Inserting {countRecords} ratings using {threads} threads");
+                int divisao = countRecords / threads;
 
-                List<Task> tasks = new List<Task>
+                List<Task> tasks = new List<Task>();
+
+                for (int i = 0; i < threads; i++)
                 {
-                    Task.Run(() => ReadPartialCsv(location, new ApplicationDbContext(OptionsBuilder.Options), divisao * 0, divisao)),
-                    Task.Run(() => ReadPartialCsv(location, new ApplicationDbContext(OptionsBuilder.Options), divisao * 1, divisao)),
-                    Task.Run(() => ReadPartialCsv(location, new ApplicationDbContext(OptionsBuilder.Options), divisao * 2, divisao)),
-                    Task.Run(() => ReadPartialCsv(location, new ApplicationDbContext(OptionsBuilder.Options), divisao * 3, countRecords - divisao * 3)),
-                };
+                    int skip = divisao * i;
+                    int take = countRecords - divisao * i;
+                    if (i == threads - 1)
+                    {
+                        tasks.Add(Task.Run(() => StartThread(location, new ApplicationDbContext(OptionsBuilder.Options), skip, take)));
+                    }
+                    else
+                    {
+                        tasks.Add(Task.Run(() => StartThread(location, new ApplicationDbContext(OptionsBuilder.Options), skip, divisao)));
+                    }
+                }
 
 
                 Task.WaitAll(tasks.ToArray());
+                Logger.Info("Ratings inserted");
             }
             catch (Exception)
             {
@@ -51,7 +62,7 @@ namespace SeedMovieLens.CsvService
             }
         }
 
-        private void ReadPartialCsv(string location, DbContext context, int skip, int take)
+        private void StartThread(string location, DbContext context, int skip, int take)
         {
             context.ChangeTracker.AutoDetectChangesEnabled = false;
             try
@@ -80,6 +91,10 @@ namespace SeedMovieLens.CsvService
             {
                 throw;
             }
+            finally
+            {
+                context.Dispose();
+            }
         }
 
         private void DetachEntries(DbContext context)
@@ -93,7 +108,7 @@ namespace SeedMovieLens.CsvService
 
     public sealed class RatingMap : ClassMap<Ratings>
     {
-        private static DateTime date = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+        private static readonly DateTime date = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
         public RatingMap()
         {
             Map(x => x.UserId).Name("userId");

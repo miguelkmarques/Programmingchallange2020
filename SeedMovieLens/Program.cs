@@ -46,7 +46,7 @@ namespace SeedMovieLens
         {
             Context.Database.Migrate();
             InsertMoviesAndGenres();
-            //InsertRatings();
+            InsertRatings();
         }
 
         private static void InsertMoviesAndGenres()
@@ -58,12 +58,7 @@ namespace SeedMovieLens
         private static void InsertRatings()
         {
             var ratingsService = new RatingsService();
-            ratingsService.ReadCsvFile(Path.Combine(Configuration.GetSection("CsvPath").Value, "ratings.csv"), Configuration.GetConnectionString("DefaultConnection"));
-            //var ratings = ratingsService.ReadCsvFile(Path.Combine(Configuration.GetSection("CsvPath").Value, "ratings.csv"));
-            //Logger.Info($"Inserting {ratings.Count()} genres");
-            //Context.Entry(ratings).State = EntityState.Added;
-            //Context.SaveChanges();
-            Logger.Info($"Ratings inserted");
+            ratingsService.ReadCsvFile(Path.Combine(Configuration.GetSection("CsvPath").Value, "ratings.csv"), Configuration.GetConnectionString("DefaultConnection"), 4);
         }
     }
 }

@@ -67,7 +67,7 @@ namespace Database.Data
             {
                 entity.HasKey(c => new { c.UserId, c.MovieId });
 
-                entity.Property(e => e.Rating).HasColumnType("decimal(1, 1)");
+                entity.Property(e => e.Rating).HasColumnType("decimal(2, 1)");
             });
 
             builder.Entity<Links>(entity =>
@@ -99,7 +99,7 @@ namespace Database.Data
             {
                 entity.HasKey(c => new { c.MovieId, c.TagId });
 
-                entity.Property(e => e.Relevance).HasColumnType("decimal(19,19)");
+                entity.Property(e => e.Relevance).HasColumnType("decimal(20,19)");
             });
         }
     }

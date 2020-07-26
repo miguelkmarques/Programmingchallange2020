@@ -23,8 +23,8 @@ namespace SeedMovieLens
         {
             Logger.Warn("start");
             OptionsBuilder.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
-            var loggerFactory = LoggerFactory.Create(configure => { configure.AddNLog(); });
-            OptionsBuilder.UseLoggerFactory(loggerFactory);
+            //var loggerFactory = LoggerFactory.Create(configure => { configure.AddNLog(); });
+            //OptionsBuilder.UseLoggerFactory(loggerFactory);
             Context = new ApplicationDbContext(OptionsBuilder.Options);
 
             try
@@ -43,7 +43,8 @@ namespace SeedMovieLens
         {
             Context.Database.Migrate();
 
-            InsertMoviesAndGenres();
+            //InsertMoviesAndGenres();
+            InsertRatings();
         }
 
         private static void InsertMoviesAndGenres()
@@ -52,12 +53,27 @@ namespace SeedMovieLens
             var movies = moviesService.ReadCsvFile(Path.Combine(Configuration.GetSection("CsvPath").Value, "movies.csv"));
             var genres = movies.SelectMany(s => s.Genres).Select(s => s.Genre).Distinct().Select(s => new Genres { Genre = s });
 
+
+            Logger.Info($"Inserting {genres.Count()} genres");
             Context.Genres.AddRange(genres);
             Context.SaveChanges();
-
+            Logger.Info($"Genres inserted");
+            Logger.Info($"Inserting {movies.Count()} movies");
             Context.Movies.AddRange(movies);
             Context.SaveChanges();
-            Console.Read();
+            Logger.Info($"Movies inserted");
+            
+        }
+
+        private static void InsertRatings()
+        {
+            var ratingsService = new RatingsService();
+            ratingsService.ReadCsvFile(Path.Combine(Configuration.GetSection("CsvPath").Value, "ratings.csv"), Context);
+            //var ratings = ratingsService.ReadCsvFile(Path.Combine(Configuration.GetSection("CsvPath").Value, "ratings.csv"));
+            //Logger.Info($"Inserting {ratings.Count()} genres");
+            //Context.Entry(ratings).State = EntityState.Added;
+            //Context.SaveChanges();
+            Logger.Info($"Ratings inserted");
         }
     }
 }

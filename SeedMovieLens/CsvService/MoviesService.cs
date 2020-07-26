@@ -3,6 +3,7 @@ using CsvHelper.Configuration;
 using Database.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -16,7 +17,7 @@ namespace SeedMovieLens.CsvService
             try
             {
                 using var reader = new StreamReader(location, Encoding.UTF8);
-                using var csv = new CsvReader(reader: reader, new System.Globalization.CultureInfo("en-US"));
+                using var csv = new CsvReader(reader: reader, CultureInfo.InvariantCulture);
                 csv.Configuration.RegisterClassMap<MovieMap>();
                 var records = csv.GetRecords<Movies>().ToList();
                 return records;

@@ -106,7 +106,7 @@ namespace Database.Data
             {
                 entity.HasKey(c => c.MovieId);
 
-                entity.Property(e => e.ImdbId).HasMaxLength(7);
+                entity.Property(e => e.ImdbId).HasMaxLength(8);
             });
 
             builder.Entity<Tags>(entity =>

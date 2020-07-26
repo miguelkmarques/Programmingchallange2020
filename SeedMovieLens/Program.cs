@@ -44,10 +44,11 @@ namespace SeedMovieLens
 
         private static void SeedData()
         {
-            Context.Database.Migrate();
-            InsertMoviesAndGenres();
-            InsertRatings();
-            InsertAverageRatingOfMovies();
+            //Context.Database.Migrate();
+            //InsertMoviesAndGenres();
+            //InsertRatings();
+            //InsertAverageRatingOfMovies();
+            InsertLinks();
         }
 
         private static void InsertMoviesAndGenres()
@@ -60,6 +61,12 @@ namespace SeedMovieLens
         {
             var ratingsService = new RatingsService();
             ratingsService.ReadCsvFile(Path.Combine(Configuration.GetSection("CsvPath").Value, "ratings.csv"), Configuration.GetConnectionString("DefaultConnection"), 4);
+        }
+
+        private static void InsertLinks()
+        {
+            var linksService = new LinksService();
+            linksService.ReadCsvFile(Path.Combine(Configuration.GetSection("CsvPath").Value, "links.csv"), Configuration.GetConnectionString("DefaultConnection"), 1);
         }
 
         private static void InsertAverageRatingOfMovies()

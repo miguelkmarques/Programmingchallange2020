@@ -47,6 +47,7 @@ namespace SeedMovieLens
             Context.Database.Migrate();
             InsertMoviesAndGenres();
             InsertRatings();
+            InsertAverageRatingOfMovies();
         }
 
         private static void InsertMoviesAndGenres()
@@ -59,6 +60,18 @@ namespace SeedMovieLens
         {
             var ratingsService = new RatingsService();
             ratingsService.ReadCsvFile(Path.Combine(Configuration.GetSection("CsvPath").Value, "ratings.csv"), Configuration.GetConnectionString("DefaultConnection"), 4);
+        }
+
+        private static void InsertAverageRatingOfMovies()
+        {
+            Logger.Info("Starting updating average rating of Movies");
+            Context.Database.ExecuteSqlRaw(@"update movies 
+set average_rating = a.rating
+from(select r.movie_id, avg(r.rating) rating
+from ratings r
+group by r.movie_id
+) a where movies.movie_id = a.movie_id");
+            Logger.Info("Average rating updated");
         }
     }
 }

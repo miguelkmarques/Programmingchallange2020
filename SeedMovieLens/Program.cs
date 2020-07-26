@@ -26,7 +26,7 @@ namespace SeedMovieLens
             //var loggerFactory = LoggerFactory.Create(configure => { configure.AddNLog(); });
             //OptionsBuilder.UseLoggerFactory(loggerFactory);
             Context = new ApplicationDbContext(OptionsBuilder.Options);
-
+            Context.ChangeTracker.AutoDetectChangesEnabled = false;
             try
             {
                 SeedData();
@@ -68,7 +68,7 @@ namespace SeedMovieLens
         private static void InsertRatings()
         {
             var ratingsService = new RatingsService();
-            ratingsService.ReadCsvFile(Path.Combine(Configuration.GetSection("CsvPath").Value, "ratings.csv"), Context);
+            ratingsService.ReadCsvFile(Path.Combine(Configuration.GetSection("CsvPath").Value, "ratings.csv"), Context, Configuration.GetConnectionString("DefaultConnection"));
             //var ratings = ratingsService.ReadCsvFile(Path.Combine(Configuration.GetSection("CsvPath").Value, "ratings.csv"));
             //Logger.Info($"Inserting {ratings.Count()} genres");
             //Context.Entry(ratings).State = EntityState.Added;

@@ -35,40 +35,30 @@ namespace SeedMovieLens
             {
                 Logger.Error(err);
             }
-
+            finally
+            {
+                Context.Dispose();
+            }
             Logger.Warn("end");
         }
 
         private static void SeedData()
         {
             Context.Database.Migrate();
-
-            //InsertMoviesAndGenres();
-            InsertRatings();
+            InsertMoviesAndGenres();
+            //InsertRatings();
         }
 
         private static void InsertMoviesAndGenres()
         {
             var moviesService = new MoviesService();
-            var movies = moviesService.ReadCsvFile(Path.Combine(Configuration.GetSection("CsvPath").Value, "movies.csv"));
-            var genres = movies.SelectMany(s => s.Genres).Select(s => s.Genre).Distinct().Select(s => new Genres { Genre = s });
-
-
-            Logger.Info($"Inserting {genres.Count()} genres");
-            Context.Genres.AddRange(genres);
-            Context.SaveChanges();
-            Logger.Info($"Genres inserted");
-            Logger.Info($"Inserting {movies.Count()} movies");
-            Context.Movies.AddRange(movies);
-            Context.SaveChanges();
-            Logger.Info($"Movies inserted");
-            
+            moviesService.ReadCsvFile(Path.Combine(Configuration.GetSection("CsvPath").Value, "movies.csv"), Configuration.GetConnectionString("DefaultConnection"), 1);
         }
 
         private static void InsertRatings()
         {
             var ratingsService = new RatingsService();
-            ratingsService.ReadCsvFile(Path.Combine(Configuration.GetSection("CsvPath").Value, "ratings.csv"), Context, Configuration.GetConnectionString("DefaultConnection"));
+            ratingsService.ReadCsvFile(Path.Combine(Configuration.GetSection("CsvPath").Value, "ratings.csv"), Configuration.GetConnectionString("DefaultConnection"));
             //var ratings = ratingsService.ReadCsvFile(Path.Combine(Configuration.GetSection("CsvPath").Value, "ratings.csv"));
             //Logger.Info($"Inserting {ratings.Count()} genres");
             //Context.Entry(ratings).State = EntityState.Added;

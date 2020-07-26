@@ -1,6 +1,5 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
-using Dapper;
 using Database.Data;
 using Database.Models;
 using Microsoft.EntityFrameworkCore;
@@ -19,13 +18,12 @@ namespace SeedMovieLens.CsvService
     {
         private readonly DbContextOptionsBuilder<ApplicationDbContext> OptionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
 
-        public void ReadCsvFile(string location, DbContext context, string connectionString)
+        public void ReadCsvFile(string location, string connectionString)
         {
             OptionsBuilder.UseNpgsql(connectionString);
             try
             {
                 int countRecords = 0;
-                //string templateInsertString = "insert into ratings values (@UserId, @MovieId, @Rating, @Date)";
                 using (var reader = new StreamReader(location, Encoding.UTF8))
                 {
                     while (reader.ReadLine() != null)
@@ -46,37 +44,6 @@ namespace SeedMovieLens.CsvService
 
 
                 Task.WaitAll(tasks.ToArray());
-
-                //using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
-                //csv.Configuration.RegisterClassMap<RatingMap>();
-                //int count = 0;
-                //foreach (var r in csv.GetRecords<Ratings>())
-                //{
-                //    context.Add(r);
-                //    if (count == 1000)
-                //    {
-                //        context.SaveChanges();
-                //        DetachEntries(context);
-                //        count = 0;
-                //    }
-                //    count++;
-                //}
-                //context.SaveChanges();
-                //DetachEntries(context);
-
-                //foreach (var r in csv.EnumerateRecords(rating))
-                //{
-                //var parameters = new DynamicParameters();
-                //parameters.Add("@UserId", r.UserId, DbType.Int64, ParameterDirection.Input);
-                //parameters.Add("@MovieId", r.MovieId, DbType.Int64, ParameterDirection.Input);
-                //parameters.Add("@Rating", r.Rating, DbType.Decimal, ParameterDirection.Input);
-                //parameters.Add("@Date", r.Date, DbType.DateTime2, ParameterDirection.Input);
-                //rows.Add(parameters);
-                //context.Entry(r).State = EntityState.Added;
-                //context.SaveChanges();
-                //context.Entry(r).State = EntityState.Detached;
-                //}
-
             }
             catch (Exception)
             {

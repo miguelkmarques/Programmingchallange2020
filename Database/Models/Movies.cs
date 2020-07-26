@@ -10,6 +10,10 @@ namespace Database.Models
 
         public string Title { get; set; }
 
+        public int Year { get; set; }
+
+        public decimal AverageRating { get; set; }
+
         public List<MovieGenres> Genres { get; set; }
 
         public List<Ratings> Ratings { get; set; }

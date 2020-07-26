@@ -70,6 +70,8 @@ namespace Database.Data
 
                 entity.Property(e => e.Title).IsRequired().HasMaxLength(255);
 
+                entity.Property(e => e.AverageRating).HasColumnType("decimal(2, 1)").HasDefaultValue(0);
+
                 entity.HasMany(e => e.Genres).WithOne(e => e.Movie).HasForeignKey(e => e.MovieId);
 
                 entity.HasMany(e => e.Ratings).WithOne(e => e.Movie).HasForeignKey(e => e.MovieId);

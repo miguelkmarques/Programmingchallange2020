@@ -44,13 +44,13 @@ namespace SeedMovieLens
 
         private static void SeedData()
         {
-            //Context.Database.Migrate();
-            //InsertMoviesAndGenres();
-            //InsertRatings();
-            //InsertAverageRatingOfMovies();
-            //InsertLinks();
-            //InsertTags();
-            //InsertGenomeTags();
+            Context.Database.Migrate();
+            InsertMoviesAndGenres();
+            InsertRatings();
+            InsertAverageRatingOfMovies();
+            InsertLinks();
+            InsertTags();
+            InsertGenomeTags();
             InsertGenomeScores();
         }
 

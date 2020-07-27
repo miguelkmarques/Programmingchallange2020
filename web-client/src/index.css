@@ -15,3 +15,16 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.search-react-table {
+  max-height: 55vh;
+  border: none !important;
+}
+
+.search-react-table thead th {
+  position: sticky;
+  top: 0;
+  border-top: none;
+  border-bottom: none;
+  background-color: white;
+}

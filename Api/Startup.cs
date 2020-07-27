@@ -37,6 +37,8 @@ namespace Api
             {
                 configuration.RootPath = "ClientApp/build";
             });
+
+            services.AddOData();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -87,7 +89,7 @@ namespace Api
             {
                 endpoints.MapControllers();
                 endpoints.EnableDependencyInjection();
-                endpoints.Filter().OrderBy();
+                endpoints.Filter().OrderBy().MaxTop(3000);
             });
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions

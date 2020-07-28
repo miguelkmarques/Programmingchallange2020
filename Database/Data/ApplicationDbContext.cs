@@ -33,6 +33,7 @@ namespace Database.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            //convertendo o nome dos objetos do banco de dados para o padrão snake_case para seguir a convention do PostgreSQL
             foreach (var entity in builder.Model.GetEntityTypes())
             {
                 entity.SetTableName(entity.GetTableName().ToSnakeCase());

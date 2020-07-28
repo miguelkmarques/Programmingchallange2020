@@ -42,54 +42,94 @@ namespace SeedMovieLens
             Logger.Warn("end");
         }
 
+        /// <summary>
+        /// Aplicar as Migrations do banco de dados e popular o banco de dados com os arquivos CSV
+        /// </summary>
         private static void SeedData()
         {
             Context.Database.Migrate();
-            InsertMoviesAndGenres();
-            InsertRatings();
+
+            var csvPath = Configuration.GetSection("CsvPath").Value;
+            var connectionString = Configuration.GetConnectionString("DefaultConnection");
+
+            InsertMoviesAndGenres(csvPath, connectionString);
+            InsertRatings(csvPath, connectionString);
             InsertAverageRatingOfMovies();
-            InsertLinks();
-            InsertTags();
-            InsertGenomeTags();
-            InsertGenomeScores();
+            InsertLinks(csvPath, connectionString);
+            InsertTags(csvPath, connectionString);
+            InsertGenomeTags(csvPath, connectionString);
+            InsertGenomeScores(csvPath, connectionString);
         }
 
-        private static void InsertMoviesAndGenres()
+
+        /// <summary>
+        /// Popular as Tabelas Movies e MovieGenres
+        /// </summary>
+        /// <param name="csvPath">Caminho raiz de onde se encontra os arquivos CSV</param>
+        /// <param name="connectionString">Connection String para acessar o banco de dados</param>
+        private static void InsertMoviesAndGenres(string csvPath, string connectionString)
         {
             var moviesService = new MoviesService();
-            moviesService.ReadCsvFile(Path.Combine(Configuration.GetSection("CsvPath").Value, "movies.csv"), Configuration.GetConnectionString("DefaultConnection"), 1);
+            moviesService.ReadCsvFile(Path.Combine(csvPath, "movies.csv"), connectionString, 1);
         }
 
-        private static void InsertRatings()
+        /// <summary>
+        /// Popular a Tabela Ratings
+        /// </summary>
+        /// <param name="csvPath">Caminho raiz de onde se encontra os arquivos CSV</param>
+        /// <param name="connectionString">Connection String para acessar o banco de dados</param>
+        private static void InsertRatings(string csvPath, string connectionString)
         {
             var ratingsService = new RatingsService();
-            ratingsService.ReadCsvFile(Path.Combine(Configuration.GetSection("CsvPath").Value, "ratings.csv"), Configuration.GetConnectionString("DefaultConnection"), 4);
+            ratingsService.ReadCsvFile(Path.Combine(csvPath, "ratings.csv"), connectionString, 4);
         }
 
-        private static void InsertLinks()
+        /// <summary>
+        /// Popular a Tabela Links
+        /// </summary>
+        /// <param name="csvPath">Caminho raiz de onde se encontra os arquivos CSV</param>
+        /// <param name="connectionString">Connection String para acessar o banco de dados</param>
+        private static void InsertLinks(string csvPath, string connectionString)
         {
             var linksService = new LinksService();
-            linksService.ReadCsvFile(Path.Combine(Configuration.GetSection("CsvPath").Value, "links.csv"), Configuration.GetConnectionString("DefaultConnection"), 1);
+            linksService.ReadCsvFile(Path.Combine(csvPath, "links.csv"), connectionString, 1);
         }
 
-        private static void InsertTags()
+        /// <summary>
+        /// Popular a Tabela Tags
+        /// </summary>
+        /// <param name="csvPath">Caminho raiz de onde se encontra os arquivos CSV</param>
+        /// <param name="connectionString">Connection String para acessar o banco de dados</param>
+        private static void InsertTags(string csvPath, string connectionString)
         {
             var tagsService = new TagsService();
-            tagsService.ReadCsvFile(Path.Combine(Configuration.GetSection("CsvPath").Value, "tags.csv"), Configuration.GetConnectionString("DefaultConnection"), 2);
+            tagsService.ReadCsvFile(Path.Combine(csvPath, "tags.csv"), connectionString, 2);
         }
 
-        private static void InsertGenomeTags()
+        /// <summary>
+        /// Popular a Tabela GenomeTags
+        /// </summary>
+        /// <param name="csvPath">Caminho raiz de onde se encontra os arquivos CSV</param>
+        /// <param name="connectionString">Connection String para acessar o banco de dados</param>
+        private static void InsertGenomeTags(string csvPath, string connectionString)
         {
             var genometagsService = new GenomeTagsService();
-            genometagsService.ReadCsvFile(Path.Combine(Configuration.GetSection("CsvPath").Value, "genome-tags.csv"), Configuration.GetConnectionString("DefaultConnection"), 1);
+            genometagsService.ReadCsvFile(Path.Combine(csvPath, "genome-tags.csv"), connectionString, 1);
         }
-
-        private static void InsertGenomeScores()
+        /// <summary>
+        /// Popular a Tabela GenomeScores
+        /// </summary>
+        /// <param name="csvPath">Caminho raiz de onde se encontra os arquivos CSV</param>
+        /// <param name="connectionString">Connection String para acessar o banco de dados</param>
+        private static void InsertGenomeScores(string csvPath, string connectionString)
         {
             var genomeScoresService = new GenomeScoresService();
-            genomeScoresService.ReadCsvFile(Path.Combine(Configuration.GetSection("CsvPath").Value, "genome-scores.csv"), Configuration.GetConnectionString("DefaultConnection"), 4);
+            genomeScoresService.ReadCsvFile(Path.Combine(csvPath, "genome-scores.csv"), connectionString, 4);
         }
 
+        /// <summary>
+        /// Rodar um Script SQL para atualizar o Average Score de todos os Movies com base na Tabela Ratings
+        /// </summary>
         private static void InsertAverageRatingOfMovies()
         {
             Logger.Info("Starting updating average rating of Movies");

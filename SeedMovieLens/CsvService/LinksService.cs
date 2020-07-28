@@ -18,6 +18,12 @@ namespace SeedMovieLens.CsvService
         private readonly DbContextOptionsBuilder<ApplicationDbContext> OptionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
+        /// <summary>
+        /// Ler o arquivo CSV e dividir a carga de acordo com o número de Threads (De acordo com o volume de dados, aplicar um número maior de Threads para popular a tabela mais rápido)
+        /// </summary>
+        /// <param name="location">Caminho do arquivo CSV</param>
+        /// <param name="connectionString">Connection String para acessar o banco de dados</param>
+        /// <param name="threads">Número de Threads a serem utilizados</param>
         public void ReadCsvFile(string location, string connectionString, int threads)
         {
             OptionsBuilder.UseNpgsql(connectionString);
@@ -33,10 +39,10 @@ namespace SeedMovieLens.CsvService
                     countRecords--;
                 }
                 Logger.Info($"Inserting {countRecords} links using {threads} threads");
+
+                //Algoritmo para realizar a divisão de tarefas entre as Threads
                 int divisao = countRecords / threads;
-
                 List<Task> tasks = new List<Task>();
-
                 for (int i = 0; i < threads; i++)
                 {
                     int skip = divisao * i;
@@ -61,6 +67,13 @@ namespace SeedMovieLens.CsvService
             }
         }
 
+        /// <summary>
+        /// Ler o arquivo CSV de acordo com a linha que deve começar e a quantidade de linhas que devem ser lidas
+        /// </summary>
+        /// <param name="location">Caminho do arquivo CSV</param>
+        /// <param name="context">DbContext do banco de dados</param>
+        /// <param name="skip">Linha de início</param>
+        /// <param name="take">Quantidade de linhas</param>
         private void StartThread(string location, DbContext context, int skip, int take)
         {
             context.ChangeTracker.AutoDetectChangesEnabled = false;
@@ -74,6 +87,7 @@ namespace SeedMovieLens.CsvService
                 foreach (var r in csv.GetRecords<Links>().Skip(skip).Take(take))
                 {
                     context.Add(r);
+                    //A cada 1000 linhas, salva no banco de dados, em vez de salvar uma por uma
                     if (count == 1000)
                     {
                         context.SaveChanges();
@@ -96,6 +110,10 @@ namespace SeedMovieLens.CsvService
             }
         }
 
+        /// <summary>
+        /// Função para fazer com que o DbContext pare de manter o Tracking das Entries que vão sendo adicionadas
+        /// </summary>
+        /// <param name="context"></param>
         private void DetachEntries(DbContext context)
         {
             foreach (var item in context.ChangeTracker.Entries<Links>())
@@ -104,6 +122,9 @@ namespace SeedMovieLens.CsvService
             }
         }
 
+        /// <summary>
+        /// Classe para mapear os campos do arquivo CSV com a Classe de destino
+        /// </summary>
         public sealed class LinkMap : ClassMap<Links>
         {
             public LinkMap()

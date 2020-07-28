@@ -1,5 +1,13 @@
 import React from "react";
-import { Row, Col, Card, CardHeader, CardBody } from "reactstrap";
+import {
+  Row,
+  Col,
+  Card,
+  CardHeader,
+  CardBody,
+  Form,
+  FormGroup,
+} from "reactstrap";
 import BootstrapTable from "react-bootstrap-table-next";
 import buildQuery from "odata-query";
 import Joi from "joi-browser";
@@ -10,9 +18,9 @@ import DefaultForm from "./../../components/defaultForm";
 
 class Movies extends DefaultForm {
   schema = {
-    year: Joi.number().integer().min(1800).max(3000).label("Year"),
-    genre: Joi.string().label("Genre"),
-    top: Joi.number().integer().min(1).max(3000).label("Top Movies"),
+    year: Joi.number().integer().allow("").min(1800).max(3000).label("Year"),
+    genre: Joi.string().allow("").label("Genre"),
+    top: Joi.number().integer().allow("").min(1).max(3000).label("Top Movies"),
   };
 
   columns = [
@@ -55,7 +63,8 @@ class Movies extends DefaultForm {
 
   async getGenres() {
     const { data: genres } = await genresService.getGenres();
-    this.setState({ genres });
+    const genresOptions = genres.map((g) => ({ id: g, name: g }));
+    this.setState({ genres: genresOptions });
   }
 
   async componentDidMount() {
@@ -71,10 +80,12 @@ class Movies extends DefaultForm {
     movies: [],
     genres: [],
     ready: false,
+    submitting: false,
     data: { year: "", genre: "", top: "" },
+    errors: {},
   };
   render() {
-    const { movies: data, ready } = this.state;
+    const { movies, ready, genres } = this.state;
     return (
       <Row>
         <Col>
@@ -84,16 +95,32 @@ class Movies extends DefaultForm {
             </CardHeader>
             <CardBody>
               {ready ? (
-                <BootstrapTable
-                  bootstrap4
-                  keyField="movieId"
-                  data={data}
-                  columns={this.columns}
-                  striped={true}
-                  hover={true}
-                  classes={"table-responsive search-react-table"}
-                  noDataIndication={"No Movies found"}
-                ></BootstrapTable>
+                <React.Fragment>
+                  <Form className="form-row" onSubmit={this.handleSubmit}>
+                    <Col md={2}>
+                      {this.renderInput("year", "Year", "number")}
+                    </Col>
+                    <Col md={2}>
+                      {this.renderSelect("genre", genres, "Genre")}
+                    </Col>
+                    <Col md={2}>
+                      {this.renderInput("top", "Top N Rated Movies", "number")}
+                    </Col>
+                    <FormGroup style={{ marginTop: 32 }}>
+                      {this.renderButton("Apply filter")}
+                    </FormGroup>
+                  </Form>
+                  <BootstrapTable
+                    bootstrap4
+                    keyField="movieId"
+                    data={movies}
+                    columns={this.columns}
+                    striped={true}
+                    hover={true}
+                    classes={"table-responsive search-react-table"}
+                    noDataIndication={"No Movies found"}
+                  ></BootstrapTable>
+                </React.Fragment>
               ) : (
                 "Loading..."
               )}

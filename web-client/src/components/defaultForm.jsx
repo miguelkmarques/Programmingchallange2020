@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import Joi from "joi-browser";
+import DefaultInput from "./defaultInput";
+import DefaultSelect from "./defaultSelect";
 
 class DefaultForm extends Component {
   state = { data: {}, errors: {} };
@@ -99,7 +101,7 @@ class DefaultForm extends Component {
   renderSelect(name, items, label, noEmpty = false, disabled = false) {
     const { data, errors } = this.state;
     return (
-      <Select
+      <DefaultSelect
         name={name}
         value={data[name] || ""}
         items={items}

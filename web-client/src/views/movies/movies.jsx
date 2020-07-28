@@ -1,11 +1,19 @@
-import React, { Component } from "react";
-import { Row, Col, Button, Card, CardHeader, CardBody } from "reactstrap";
+import React from "react";
+import { Row, Col, Card, CardHeader, CardBody } from "reactstrap";
 import BootstrapTable from "react-bootstrap-table-next";
 import buildQuery from "odata-query";
+import Joi from "joi-browser";
 import formatNumber from "./../../helpers/formatNumber";
 import moviesService from "./../../services/moviesService";
+import DefaultForm from "./../../components/defaultForm";
 
-class Movies extends Component {
+class Movies extends DefaultForm {
+  schema = {
+    year: Joi.number().integer().min(1800).max(3000).label("Year"),
+    genre: Joi.string().label("Genre"),
+    top: Joi.number().integer().min(1).max(3000).label("Top Movies"),
+  };
+
   columns = [
     {
       dataField: "movieId",
@@ -49,9 +57,9 @@ class Movies extends Component {
     this.setState({ ready: true });
   }
 
-  state = { movies: [], ready: false };
+  state = { movies: [], ready: false, data: { year: "", genre: "", top: "" } };
   render() {
-    const { movies: data } = this.state;
+    const { movies: data, ready } = this.state;
     return (
       <Row>
         <Col>
@@ -60,16 +68,20 @@ class Movies extends Component {
               List of Movies
             </CardHeader>
             <CardBody>
-              <BootstrapTable
-                bootstrap4
-                keyField="movieId"
-                data={data}
-                columns={this.columns}
-                striped={true}
-                hover={true}
-                classes={"table-responsive search-react-table"}
-                noDataIndication={"No Movies found"}
-              ></BootstrapTable>
+              {ready ? (
+                <BootstrapTable
+                  bootstrap4
+                  keyField="movieId"
+                  data={data}
+                  columns={this.columns}
+                  striped={true}
+                  hover={true}
+                  classes={"table-responsive search-react-table"}
+                  noDataIndication={"No Movies found"}
+                ></BootstrapTable>
+              ) : (
+                "Loading..."
+              )}
             </CardBody>
           </Card>
         </Col>

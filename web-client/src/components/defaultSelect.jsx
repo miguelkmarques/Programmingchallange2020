@@ -1,6 +1,7 @@
 import React from "react";
 import { Input, FormGroup, Label, FormFeedback } from "reactstrap";
 
+//Input padrão de Select com lista de opcões disponíveis
 const DefaultSelect = ({ name, items, label, error, noEmpty, ...rest }) => {
   return (
     <FormGroup>

@@ -3,6 +3,8 @@ import Joi from "joi-browser";
 import DefaultInput from "./defaultInput";
 import DefaultSelect from "./defaultSelect";
 
+//Classe para funcionalidade padrão de um formulário com renderização de inputs e um botão submit
+// com validação de input
 class DefaultForm extends Component {
   state = { data: {}, errors: {} };
 

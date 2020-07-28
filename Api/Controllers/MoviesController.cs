@@ -32,7 +32,7 @@ namespace Api.Controllers
         /// Endpoint HTTP GET api/movies para retornar a lista de Movies do banco de dados
         /// </summary>
         /// <param name="genre">Genre para aplicar filtro</param>
-        /// <returns></returns>
+        /// <returns>IEnumerable<MovieDto></returns>
         [HttpGet]
         //Aqui estou limitando o número de resultados para 3000 em um uníca requisição,
         //O recomendável é usar a função no OData de paginação, porém no Web-Client não implementei a função de Paginação

@@ -17,12 +17,14 @@ import genresService from "./../../services/genresService";
 import DefaultForm from "./../../components/defaultForm";
 
 class Movies extends DefaultForm {
+  //Schema Joi do formulário de Pesquisa para impedir que o usuário use parâmetros inválidos
   schema = {
     year: Joi.number().integer().allow("").min(1800).max(3000).label("Year"),
     genre: Joi.string().allow("").label("Genre"),
     top: Joi.number().integer().allow("").min(1).max(3000).label("Top Movies"),
   };
 
+  //Colunas que devem aparecer ou não aparecer na tela e aplicando formatters customizados
   columns = [
     {
       dataField: "movieId",
@@ -41,7 +43,8 @@ class Movies extends DefaultForm {
       headerAlign: "center",
       headerClasses: "text-nowrap",
       classes: "text-nowrap",
-      formatter: (cell, row) => cell.map((g) => g.genre).join(", ") || "-",
+      //Função para concatenar a lista de Genres do Movie, separado por vírgula
+      formatter: (cell, row) => cell.join(", ") || "-",
     },
     {
       dataField: "averageRating",
@@ -49,18 +52,24 @@ class Movies extends DefaultForm {
       headerClasses: "text-nowrap",
       headerAlign: "center",
       align: "center",
-      formatter: (cell, row) => (cell ? formatNumber(cell, 1, 1) : "-"),
+      //Função para sempre mostrar uma casa depois da vírgula
+      formatter: (cell, row) => (cell ? formatNumber(cell, 1, 1) : "0.0"),
     },
   ];
 
+  //Função para recuperar a lista de Movies da API Rest, aplicando a query OData
+  //de acordo com o filtro do usuário
   async getMovies() {
     const { year, genre, top } = this.state.data;
 
+    //por padrão aplica a ordenação por Title em ordem ascendente
     let queryMovies = { orderBy: "title asc", filter: {} };
 
+    //se o year tiver um valor, adiciona na propriedade filter
     if (year) {
       queryMovies.filter = { ...queryMovies.filter, year: parseInt(year) };
     }
+    //se o top tiver um valor, adiciona na propriedade top
     if (top) {
       queryMovies = {
         ...queryMovies,
@@ -69,22 +78,30 @@ class Movies extends DefaultForm {
       };
     }
 
+    //aplica a função buildQuery para retornar a string equivalente a query
     let query = buildQuery(queryMovies);
 
+    //se o genre tiver um valor, concatena na string query no final
     if (genre) {
       query = `${query}&genre=${genre}`;
     }
 
+    //usa o moviesService para realizar a requisição HTTP GET para a API
     const { data: movies } = await moviesService.getMovies(query);
+    //atualiza o State com a lista de Movies
     this.setState({ movies });
   }
 
   async getGenres() {
+    //usa o genresService para realizar a requisição HTTP GET para a API
     const { data: genres } = await genresService.getGenres();
     const genresOptions = genres.map((g) => ({ id: g, name: g }));
+    //atualiza o State com a lista de Genres
     this.setState({ genres: genresOptions });
   }
 
+  //No momento que a página carrega, chama as funções para recuperar a lista de Movies e
+  //a lista de Genres que serve para aplicar o filtro de Genre no formulário
   async componentDidMount() {
     const movies = this.getMovies();
     const genres = this.getGenres();
@@ -94,6 +111,8 @@ class Movies extends DefaultForm {
     this.setState({ ready: true });
   }
 
+  //Após o usuário clicar no botão e ser validado os campos do formulário, chama a função getMovies
+  //para atualizar a lista de Movies de acordo com o filtro aplicado pelo usuário
   doSubmit = async () => {
     await this.getMovies();
     this.setState({ submitting: false });

@@ -22,6 +22,10 @@ namespace Api.Controllers
         }
 
         // GET: api/genres
+        /// <summary>
+        /// Endpoint HTTP GET api/genres para retornar a lista de Genres do banco de dados
+        /// </summary>
+        /// <returns>IEnumerable<string></returns>
         [HttpGet]
         public IEnumerable<string> Get()
         {

@@ -56,6 +56,8 @@ namespace Api
             }
 
             app.UseHttpsRedirection();
+
+            //Definindo o Cache Control Header dos arquivos estáticos do webclient em React
             app.UseSpaStaticFiles(new StaticFileOptions()
             {
                 OnPrepareResponse = ctx =>
@@ -89,6 +91,7 @@ namespace Api
             {
                 endpoints.MapControllers();
                 endpoints.EnableDependencyInjection();
+                //Filtrando quais funções podem ser usadas no OData
                 endpoints.Filter().OrderBy().MaxTop(3000);
             });
 
@@ -119,7 +122,8 @@ namespace Api
 
                 if (env.IsDevelopment())
                 {
-                    //spa.UseReactDevelopmentServer(npmScript: "start");
+                    //Usar Proxy para redirecionar todas as requisições que não são os endpoints da API para o servidor de Desenvolvimento
+                    //do React, desse jeito trabalha com apenas um link que é o https://localhost:44316/ , assim evitando conflito com CORS
                     spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
                 }
             });

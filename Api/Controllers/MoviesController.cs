@@ -19,10 +19,9 @@ namespace Api.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public MoviesController(ApplicationDbContext context, ILogger<MoviesController> logger)
+        public MoviesController(ApplicationDbContext context)
         {
             _context = context;
-            _logger = logger;
         }
 
         // GET: api/movies

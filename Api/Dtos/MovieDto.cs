@@ -15,7 +15,12 @@ namespace Api.Dtos
 
         public decimal averageRating { get; set; }
 
-        public List<string> genres { get; set; }
+        public List<GenreDto> genres { get; set; }
+    }
+
+    public class GenreDto
+    {
+        public string genre { get; set; }
     }
 
 

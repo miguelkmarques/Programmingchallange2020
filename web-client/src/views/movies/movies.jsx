@@ -41,7 +41,7 @@ class Movies extends DefaultForm {
       headerAlign: "center",
       headerClasses: "text-nowrap",
       classes: "text-nowrap",
-      formatter: (cell, row) => cell.join(", ") || "-",
+      formatter: (cell, row) => cell.map((g) => g.genre).join(", ") || "-",
     },
     {
       dataField: "averageRating",
@@ -54,7 +54,21 @@ class Movies extends DefaultForm {
   ];
 
   async getMovies() {
-    let queryMovies = { orderBy: "averageRating desc, title asc" };
+    const { year, genre, top } = this.state.data;
+
+    let queryMovies = { orderBy: "title asc", filter: {} };
+
+    if (year) {
+      queryMovies.filter = { ...queryMovies.filter, year: parseInt(year) };
+    }
+    if (top) {
+      queryMovies = {
+        ...queryMovies,
+        top: parseInt(top),
+        orderBy: "averageRating desc, title asc",
+      };
+    }
+
     const query = buildQuery(queryMovies);
 
     const { data: movies } = await moviesService.getMovies(query);
@@ -75,6 +89,11 @@ class Movies extends DefaultForm {
     await genres;
     this.setState({ ready: true });
   }
+
+  doSubmit = async () => {
+    await this.getMovies();
+    this.setState({ submitting: false });
+  };
 
   state = {
     movies: [],

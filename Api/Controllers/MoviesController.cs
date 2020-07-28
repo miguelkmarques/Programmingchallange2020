@@ -37,7 +37,7 @@ namespace Api.Controllers
                     title = s.Title,
                     averageRating = s.AverageRating,
                     year = s.Year,
-                    genres = s.Genres.Select(sg => sg.Genre).ToList()
+                    genres = s.Genres.Select(sg => new GenreDto { genre = sg.Genre }).ToList()
                 });
         }
     }

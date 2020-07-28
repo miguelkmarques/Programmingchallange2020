@@ -5,6 +5,7 @@ import buildQuery from "odata-query";
 import Joi from "joi-browser";
 import formatNumber from "./../../helpers/formatNumber";
 import moviesService from "./../../services/moviesService";
+import genresService from "./../../services/genresService";
 import DefaultForm from "./../../components/defaultForm";
 
 class Movies extends DefaultForm {
@@ -52,19 +53,33 @@ class Movies extends DefaultForm {
     this.setState({ movies });
   }
 
+  async getGenres() {
+    const { data: genres } = await genresService.getGenres();
+    this.setState({ genres });
+  }
+
   async componentDidMount() {
-    await this.getMovies();
+    const movies = this.getMovies();
+    const genres = this.getGenres();
+
+    await movies;
+    await genres;
     this.setState({ ready: true });
   }
 
-  state = { movies: [], ready: false, data: { year: "", genre: "", top: "" } };
+  state = {
+    movies: [],
+    genres: [],
+    ready: false,
+    data: { year: "", genre: "", top: "" },
+  };
   render() {
     const { movies: data, ready } = this.state;
     return (
       <Row>
         <Col>
           <Card>
-            <CardHeader className="bg-primary text-white">
+            <CardHeader className="bg-dark text-white h5">
               List of Movies
             </CardHeader>
             <CardBody>

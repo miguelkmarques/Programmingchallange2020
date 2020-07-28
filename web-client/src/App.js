@@ -1,7 +1,6 @@
 import React from "react";
 import "./App.css";
 import Movies from "./views/movies/movies";
-import { Container } from "reactstrap";
 import NavBar from "./components/navBar";
 import { ToastContainer } from "react-toastify";
 

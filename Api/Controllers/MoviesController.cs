@@ -28,7 +28,7 @@ namespace Api.Controllers
         // GET: api/movies
         [HttpGet]
         [EnableQuery(PageSize = 3000, AllowedFunctions = AllowedFunctions.AllFunctions &
-            ~AllowedFunctions.All & ~AllowedFunctions.Any & ~AllowedFunctions.AllStringFunctions, AllowedOrderByProperties = "title, averageRating")]
+            ~AllowedFunctions.All & ~AllowedFunctions.AllStringFunctions, AllowedOrderByProperties = "title, averageRating")]
         public IEnumerable<MovieDto> Get()
         {
             return _context.Movies.AsNoTracking()

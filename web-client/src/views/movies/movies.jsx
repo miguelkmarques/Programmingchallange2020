@@ -56,7 +56,7 @@ class Movies extends Component {
       <Row>
         <Col>
           <Card>
-            <CardHeader className="bg-secondary text-white">
+            <CardHeader className="bg-primary text-white">
               List of Movies
             </CardHeader>
             <CardBody>
@@ -65,6 +65,7 @@ class Movies extends Component {
                 keyField="movieId"
                 data={data}
                 columns={this.columns}
+                striped={true}
                 hover={true}
                 classes={"table-responsive search-react-table"}
                 noDataIndication={"No Movies found"}

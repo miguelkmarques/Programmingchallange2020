@@ -69,7 +69,11 @@ class Movies extends DefaultForm {
       };
     }
 
-    const query = buildQuery(queryMovies);
+    let query = buildQuery(queryMovies);
+
+    if (genre) {
+      query = `${query}&genre=${genre}`;
+    }
 
     const { data: movies } = await moviesService.getMovies(query);
     this.setState({ movies });

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Api.Dtos;
 using Database.Data;
+using Database.Models;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNet.OData.Query;
 using Microsoft.AspNetCore.Mvc;
@@ -27,10 +28,21 @@ namespace Api.Controllers
         // GET: api/movies
         [HttpGet]
         [EnableQuery(PageSize = 3000, AllowedFunctions = AllowedFunctions.AllFunctions &
-            ~AllowedFunctions.All & ~AllowedFunctions.AllStringFunctions, AllowedOrderByProperties = "title, averageRating")]
-        public IEnumerable<MovieDto> Get()
+            ~AllowedFunctions.All & ~AllowedFunctions.Any & ~AllowedFunctions.AllStringFunctions, AllowedOrderByProperties = "title, averageRating")]
+        public IEnumerable<MovieDto> Get(string genre)
         {
-            return _context.Movies.AsNoTracking()
+            IQueryable<Movies> query = null;
+
+            if (string.IsNullOrWhiteSpace(genre))
+            {
+                query = _context.Movies.FromSqlRaw("select * from movies");
+            }
+            else
+            {
+                query = _context.Movies.FromSqlInterpolated($"select * from movies m where m.movie_id in (select mg.movie_id from movie_genres mg where genre = {genre})");
+            }
+
+            return query.AsNoTracking()
                 .Select(s => new MovieDto
                 {
                     movieId = s.MovieId,

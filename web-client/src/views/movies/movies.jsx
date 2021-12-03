@@ -35,14 +35,14 @@ class Movies extends DefaultForm {
       dataField: "title",
       text: "Movie Title",
       headerAlign: "center",
-      headerClasses: "text-nowrap",
+      headerClasses: "",
     },
     {
       dataField: "genres",
       text: "Genre",
       headerAlign: "center",
-      headerClasses: "text-nowrap",
-      classes: "text-nowrap",
+      headerClasses: "",
+      classes: "",
       //Função para concatenar a lista de Genres do Movie, separado por vírgula
       formatter: (cell, row) => cell.join(", ") || "-",
     },
@@ -159,7 +159,7 @@ class Movies extends DefaultForm {
                     columns={this.columns}
                     striped={true}
                     hover={true}
-                    classes={"table-responsive search-react-table"}
+                    classes={" search-react-table"}
                     noDataIndication={"No Movies found"}
                   ></BootstrapTable>
                 </React.Fragment>

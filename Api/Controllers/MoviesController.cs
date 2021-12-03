@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Api.Dtos;
+using Api.Extensions;
 using Database.Data;
 using Database.Models;
 using Microsoft.AspNet.OData;
@@ -63,6 +64,12 @@ namespace Api.Controllers
                     year = s.Year,
                     genres = s.Genres.Select(sg => sg.Genre).ToList()
                 });
+        }
+
+        [HttpGet("[action]/{field}")]
+        public IEnumerable<string> GetSingleField(string field)
+        {
+            return _context.Movies.Take(5).SelectSingleField<Movies, string>(field);
         }
     }
 }
